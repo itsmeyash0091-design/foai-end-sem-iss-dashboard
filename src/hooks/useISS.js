@@ -50,7 +50,7 @@ export function useISS() {
 
     // Strategy 1: Direct WhereTheISS.at (Most reliable for production HTTPS)
     try {
-      const res = await axios.get(ISS_BACKUP, { timeout: 8000 });
+      const res = await axios.get(`${ISS_BACKUP}?t=${Date.now()}`, { timeout: 8000 });
       data = res.data;
       isWhereTheIss = true;
       success = true;
@@ -58,7 +58,7 @@ export function useISS() {
       console.warn('WhereTheISS.at failed, attempting OpenNotify proxy...');
       // Strategy 2: OpenNotify via Proxy (Fallback)
       try {
-        const res = await axios.get(ISS_PROXY, { timeout: 8000 });
+        const res = await axios.get(`${ISS_PROXY}?t=${Date.now()}`, { timeout: 8000 });
         data = res.data;
         success = true;
       } catch (err2) {
@@ -105,12 +105,13 @@ export function useISS() {
       setPosition(newPos);
       setPositions(prev => [...prev, newPos].slice(-15));
       setError(null);
-    } else if (!position) {
-      setError('Mission telemetry delayed. Check your internet connection.');
+    } else {
+      // Use ref-like check or just rely on the fact that 'position' state exists
+      setError(prev => prevPosition.current ? null : 'Mission telemetry delayed. Check your internet connection.');
     }
     
     setLoading(false);
-  }, [position]);
+  }, []);
 
   useEffect(() => {
     fetchAstronauts();
