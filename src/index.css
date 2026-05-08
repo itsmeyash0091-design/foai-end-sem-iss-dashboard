@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #f0f4ff;
+    --bg-card: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --accent: #4f46e5;
+  }
+
+  .dark {
+    --bg-primary: #0a0e1a;
+    --bg-card: #0f1629;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --border-color: #1e2d4a;
+    --accent: #6366f1;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-space-600/40 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-space-500/60;
+  }
+}
+
+@layer components {
+  /* Cards */
+  .glass-card {
+    @apply bg-white/80 dark:bg-cosmic-card/80 backdrop-blur-xl border border-white/20 dark:border-cosmic-border/50 rounded-2xl shadow-xl shadow-black/5 dark:shadow-black/30;
+  }
+
+  .card {
+    @apply bg-white dark:bg-cosmic-card border border-slate-200/60 dark:border-cosmic-border rounded-2xl shadow-lg shadow-black/5 dark:shadow-black/20;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-space-500 to-space-600 hover:from-space-600 hover:to-space-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-space-500/25 hover:shadow-space-500/40 hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-white/10 dark:bg-white/5 hover:bg-white/20 dark:hover:bg-white/10 border border-white/20 dark:border-cosmic-border text-[var(--text-primary)] font-medium rounded-xl transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-3 py-2 hover:bg-slate-100 dark:hover:bg-white/5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] rounded-lg transition-all duration-200;
+  }
+
+  /* Section header */
+  .section-title {
+    @apply text-xl font-bold text-[var(--text-primary)] flex items-center gap-2;
+  }
+
+  /* Stat badge */
+  .stat-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full;
+  }
+
+  /* Live dot */
+  .live-dot {
+    @apply w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_theme(colors.emerald.500)] animate-pulse;
+  }
+
+  /* Skeleton */
+  .skeleton {
+    @apply bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-cosmic-border dark:via-white/5 dark:to-cosmic-border bg-[length:200%_100%] animate-shimmer rounded-lg;
+  }
+
+  /* Scrollable */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  /* ISS Map */
+  .leaflet-container {
+    @apply rounded-xl overflow-hidden;
+    background: #0a0e1a !important;
+  }
+
+  .dark .leaflet-tile {
+    filter: invert(1) hue-rotate(200deg) brightness(0.7) saturate(0.8);
+  }
+
+  /* Toast */
+  .toast {
+    @apply fixed bottom-6 right-6 z-[9999] flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl border animate-slide-in;
+    min-width: 280px;
+    max-width: 380px;
+  }
+
+  .toast-success {
+    @apply bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400;
+  }
+
+  .toast-error {
+    @apply bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400;
+  }
+
+  .toast-info {
+    @apply bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400;
+  }
+
+  /* Chat */
+  .chat-bubble-user {
+    @apply bg-gradient-to-br from-space-500 to-space-700 text-white rounded-2xl rounded-br-md px-4 py-3 max-w-[85%] ml-auto shadow-lg;
+  }
+
+  .chat-bubble-ai {
+    @apply bg-white dark:bg-cosmic-border/60 border border-slate-200/60 dark:border-cosmic-border text-[var(--text-primary)] rounded-2xl rounded-bl-md px-4 py-3 max-w-[85%] shadow-md;
+  }
+
+  /* Stars background */
+  .stars-bg {
+    background-image: 
+      radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.3), transparent),
+      radial-gradient(1px 1px at 80px 10px, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1px 1px at 50px 60px, rgba(255,255,255,0.15), transparent),
+      radial-gradient(1px 1px at 120px 40px, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 160px 80px, rgba(255,255,255,0.1), transparent);
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-space-400 via-space-300 to-blue-400 bg-clip-text text-transparent;
+  }
+
+  .border-glow {
+    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.1);
+  }
+}
