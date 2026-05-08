@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/chat/:path*",
-      "destination": "https://api-inference.huggingface.co/:path*"
+      "destination": "https://api-inference.huggingface.co/v1/:path*"
     },
     {
       "source": "/(.*)",
