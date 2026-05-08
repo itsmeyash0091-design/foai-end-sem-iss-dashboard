@@ -50,20 +50,11 @@ export function truncate(text, max = 120) {
 export async function reverseGeocode(lat, lon) {
   try {
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
-      { headers: { 'Accept-Language': 'en' } }
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
     );
     if (!res.ok) return 'Unknown Location';
     const data = await res.json();
-    if (data.error) return 'Over Ocean';
-    const addr = data.address;
-    const city =
-      addr.city ||
-      addr.town ||
-      addr.village ||
-      addr.county ||
-      addr.state ||
-      addr.country;
+    const city = data.city || data.locality || data.principalSubdivision || data.countryName;
     return city ? `Near ${city}` : 'Over Ocean';
   } catch {
     return 'Over Ocean';

@@ -114,19 +114,25 @@ export function useISS() {
     let cancelled = false;
     const geocode = async () => {
       try {
+        // Use BigDataCloud's free client-side API - more reliable for CORS and rate limits than Nominatim
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?lat=${position.lat}&lon=${position.lon}&format=json`,
-          { headers: { 'Accept-Language': 'en' } }
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${position.lat}&longitude=${position.lon}&localityLanguage=en`
         );
         if (cancelled) return;
+        
         if (res.ok) {
           const d = await res.json();
-          const addr = d.address;
-          const city = addr.city || addr.town || addr.village || addr.county || addr.state || addr.country;
+          // Extract city or most relevant locality info
+          const city = d.city || d.locality || d.principalSubdivision || d.countryName;
           setLocation(city ? `Near ${city}` : 'Over Ocean');
+        } else if (res.status === 429) {
+          console.warn('Geocoding rate limited, skipping update');
         }
-      } catch {
-        if (!cancelled) setLocation('Over Ocean');
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('Geocoding failed:', err.message);
+          setLocation('Over Ocean');
+        }
       }
     };
     geocode();
