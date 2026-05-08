@@ -24,8 +24,8 @@ export function useISS() {
 
   const fetchAstronauts = useCallback(async () => {
     try {
-      // Try Vercel proxy first
-      const { data } = await axios.get(ASTROS_PROXY, { timeout: 8000 });
+      // Try Vercel proxy first with a cache-busting timestamp to avoid sticky 429s
+      const { data } = await axios.get(`${ASTROS_PROXY}?t=${Date.now()}`, { timeout: 8000 });
       if (data && data.people) {
         setAstronauts(data.people);
         return;

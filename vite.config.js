@@ -9,6 +9,11 @@ export default defineConfig({
         target: 'http://api.open-notify.org',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/iss/, '')
+      },
+      '/api/chat': {
+        target: 'https://api-inference.huggingface.co',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/chat/, '')
       }
     }
   }
