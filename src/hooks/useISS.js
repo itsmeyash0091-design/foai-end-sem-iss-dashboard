@@ -48,18 +48,18 @@ export function useISS() {
     let data = null;
     let isWhereTheIss = false;
 
-    // Strategy 1: Try requested OpenNotify via Proxy (Works in Dev and via vercel.json)
+    // Strategy 1: Direct WhereTheISS.at (Most reliable for production HTTPS)
     try {
-      const res = await axios.get(ISS_PROXY, { timeout: 8000 });
+      const res = await axios.get(ISS_BACKUP, { timeout: 8000 });
       data = res.data;
+      isWhereTheIss = true;
       success = true;
     } catch (err) {
-      console.warn('ISS Proxy failed, attempting direct backup...');
-      // Strategy 2: Direct WhereTheISS.at (Most reliable for production HTTPS)
+      console.warn('WhereTheISS.at failed, attempting OpenNotify proxy...');
+      // Strategy 2: OpenNotify via Proxy (Fallback)
       try {
-        const res = await axios.get(ISS_BACKUP, { timeout: 8000 });
+        const res = await axios.get(ISS_PROXY, { timeout: 8000 });
         data = res.data;
-        isWhereTheIss = true;
         success = true;
       } catch (err2) {
         console.error('All ISS sources failed');

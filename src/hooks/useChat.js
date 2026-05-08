@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 const CHAT_KEY = 'iss_chat_history';
 const MAX_MESSAGES = 30;
 const HF_TOKEN = import.meta.env.VITE_AI_TOKEN;
-const MODEL_URL = 'https://api-inference.huggingface.co/v1/chat/completions';
+const MODEL_URL = '/api/chat/v1/chat/completions';
 const MODEL_NAME = 'meta-llama/Llama-3.2-3B-Instruct';
 
 const SYSTEM_PROMPT = `You are a professional ISS Mission Control AI Assistant. 

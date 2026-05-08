@@ -5,6 +5,10 @@
       "destination": "http://api.open-notify.org/:path*"
     },
     {
+      "source": "/api/chat/:path*",
+      "destination": "https://api-inference.huggingface.co/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
