@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { calculateSpeed } from '../utils/helpers';
+import { calculateSpeed, setCached, getCached } from '../utils/helpers';
 
 // Production-ready API endpoints
 const ISS_PROXY = '/api/iss/iss-now.json';
