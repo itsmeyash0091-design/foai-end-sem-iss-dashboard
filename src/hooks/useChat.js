@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import axios from 'axios';
 
 const CHAT_KEY = 'iss_chat_history';
 const MAX_MESSAGES = 30;
@@ -50,32 +51,25 @@ ${(context.articles || []).slice(0, 5).map((a, i) => `${i + 1}. ${a.title}`).joi
 `;
 
     try {
-      // Using OpenAI-compatible endpoint as requested
-      const res = await fetch(MODEL_URL, {
-        method: 'POST',
+      // Using axios for more robust requests and better error reporting
+      const { data } = await axios.post(MODEL_URL, {
+        model: MODEL_NAME,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: `Current Dashboard Context: ${contextStr}` },
+          ...messages.map(m => ({ role: m.role, content: m.content })),
+          { role: 'user', content: userText }
+        ],
+        max_tokens: 250,
+        temperature: 0.7,
+      }, {
         headers: {
           Authorization: `Bearer ${HF_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          model: MODEL_NAME,
-          messages: [
-            { role: 'system', content: SYSTEM_PROMPT },
-            { role: 'system', content: `Current Dashboard Context: ${contextStr}` },
-            ...messages.map(m => ({ role: m.role, content: m.content })),
-            { role: 'user', content: userText }
-          ],
-          max_tokens: 250,
-          temperature: 0.7,
-        }),
+        timeout: 15000
       });
 
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error?.message || `Service Error: ${res.status}`);
-      }
-
-      const data = await res.json();
       const aiText = data.choices?.[0]?.message?.content || "I'm sorry, I am currently unable to process your request.";
 
       const aiMsg = { 
@@ -89,9 +83,10 @@ ${(context.articles || []).slice(0, 5).map((a, i) => `${i + 1}. ${a.title}`).joi
       saveHistory(final);
     } catch (err) {
       console.error('Chat AI Error:', err);
+      const errMsg = err.response?.data?.error?.message || err.message;
       const aiMsg = { 
         role: 'assistant', 
-        content: `⚠️ Mission Control Error: ${err.message}.`,
+        content: `⚠️ Mission Control Error: ${errMsg}.`,
         ts: Date.now(),
         isError: true
       };
