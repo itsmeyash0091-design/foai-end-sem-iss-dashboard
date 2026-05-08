@@ -135,11 +135,11 @@ export function useISS() {
         
         if (res.ok) {
           const d = await res.json();
-          // Extract city or most relevant locality info
           const city = d.city || d.locality || d.principalSubdivision || d.countryName;
           setLocation(city ? `Near ${city}` : 'Over Ocean');
-        } else if (res.status === 429) {
-          console.warn('Geocoding rate limited, skipping update');
+        } else {
+          console.warn(`Geocoding status ${res.status}`);
+          if (!location) setLocation('Over Ocean');
         }
       } catch (err) {
         if (!cancelled) {

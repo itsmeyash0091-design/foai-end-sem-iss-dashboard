@@ -3,8 +3,8 @@ import { useState, useCallback } from 'react';
 const CHAT_KEY = 'iss_chat_history';
 const MAX_MESSAGES = 30;
 const HF_TOKEN = import.meta.env.VITE_AI_TOKEN;
-const MODEL_URL = '/api/chat/v1/chat/completions';
-const MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.2';
+const MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.3';
+const MODEL_URL = `/api/chat/models/${MODEL_NAME}/v1/chat/completions`;
 
 const SYSTEM_PROMPT = `You are a professional ISS Mission Control AI Assistant. 
 Use the following context to answer questions. 
