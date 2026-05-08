@@ -5,8 +5,8 @@ import { calculateSpeed } from '../utils/helpers';
 // Production-ready API endpoints
 const ISS_PROXY = '/api/iss/iss-now.json';
 const ISS_BACKUP = 'https://api.wheretheiss.at/v1/satellites/25544';
-// AllOrigins is generally more reliable for Vercel production than corsproxy.io
-const ASTROS_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent('http://api.open-notify.org/astros.json')}`;
+const ASTROS_PROXY = '/api/iss/astros.json';
+const ASTROS_BACKUP = `https://api.allorigins.win/raw?url=${encodeURIComponent('http://api.open-notify.org/astros.json')}`;
 
 const POLL_INTERVAL = 15000;
 
@@ -24,12 +24,22 @@ export function useISS() {
 
   const fetchAstronauts = useCallback(async () => {
     try {
-      const { data } = await axios.get(ASTROS_URL, { timeout: 10000 });
+      // Try Vercel proxy first
+      const { data } = await axios.get(ASTROS_PROXY, { timeout: 8000 });
       if (data && data.people) {
         setAstronauts(data.people);
+        return;
       }
     } catch (err) {
-      console.warn('Astronauts fetch failed:', err.message);
+      console.warn('Astronauts proxy failed, trying backup...');
+      try {
+        const { data } = await axios.get(ASTROS_BACKUP, { timeout: 10000 });
+        if (data && data.people) {
+          setAstronauts(data.people);
+        }
+      } catch (err2) {
+        console.warn('All astronaut sources failed:', err2.message);
+      }
     }
   }, []);
 
