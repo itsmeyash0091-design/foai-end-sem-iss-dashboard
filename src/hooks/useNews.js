@@ -5,6 +5,7 @@ import { setCached, getCached } from '../utils/helpers';
 const NEWS_TTL = 15 * 60 * 1000;
 const CACHE_KEY = 'iss_news_cache';
 const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
+console.log('News API Key:', API_KEY ? 'Present' : 'MISSING');
 
 export function useNews() {
   const [articles, setArticles] = useState([]);

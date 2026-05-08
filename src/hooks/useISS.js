@@ -48,23 +48,18 @@ export function useISS() {
     let data = null;
     let isWhereTheIss = false;
 
-    // Strategy 1: Direct WhereTheISS.at (Most reliable for production HTTPS)
+    // Strategy 1: OpenNotify via Proxy (User requested priority)
     try {
-      if (window._iss_backoff && Date.now() < window._iss_backoff) return;
-      
-      const res = await axios.get(`${ISS_BACKUP}?t=${Date.now()}`, { timeout: 8000 });
+      const res = await axios.get(ISS_PROXY, { timeout: 8000 });
       data = res.data;
-      isWhereTheIss = true;
       success = true;
     } catch (err) {
-      if (err.response?.status === 429) {
-        window._iss_backoff = Date.now() + 30000; // 30s backoff
-      }
-      console.warn('WhereTheISS.at failed, attempting OpenNotify proxy...');
-      // Strategy 2: OpenNotify via Proxy (Fallback)
+      console.warn('OpenNotify proxy failed, attempting WhereTheISS.at fallback...');
+      // Strategy 2: WhereTheISS.at (Reliable backup)
       try {
-        const res = await axios.get(`${ISS_PROXY}?t=${Date.now()}`, { timeout: 8000 });
+        const res = await axios.get(ISS_BACKUP, { timeout: 8000 });
         data = res.data;
+        isWhereTheIss = true;
         success = true;
       } catch (err2) {
         console.error('All ISS sources failed');
@@ -111,8 +106,10 @@ export function useISS() {
       setPositions(prev => [...prev, newPos].slice(-15));
       setError(null);
     } else {
-      // Use ref-like check or just rely on the fact that 'position' state exists
-      setError(prev => prevPosition.current ? null : 'Mission telemetry delayed. Check your internet connection.');
+      // If we don't have a position yet, set an error
+      if (!prevPosition.current) {
+        setError('Mission telemetry delayed. Check your internet connection.');
+      }
     }
     
     setLoading(false);

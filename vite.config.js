@@ -11,7 +11,7 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api\/iss/, '')
       },
       '/api/chat': {
-        target: 'https://api-inference.huggingface.co/v1',
+        target: 'https://api-inference.huggingface.co',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/chat/, '')
       }
