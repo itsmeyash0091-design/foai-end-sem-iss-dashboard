@@ -10,10 +10,10 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/iss/, '')
       },
-      '/api/chat': {
-        target: 'https://router.huggingface.co',
+      '/api/chat/completions': {
+        target: 'https://router.huggingface.co/v1/chat/completions',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/chat/, '')
+        rewrite: (path) => ''
       }
     }
   }

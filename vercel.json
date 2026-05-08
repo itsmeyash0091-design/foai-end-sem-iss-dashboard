@@ -5,8 +5,8 @@
       "destination": "http://api.open-notify.org/:path*"
     },
     {
-      "source": "/api/chat/:path*",
-      "destination": "https://router.huggingface.co/:path*"
+      "source": "/api/chat/completions",
+      "destination": "https://router.huggingface.co/v1/chat/completions"
     },
     {
       "source": "/(.*)",

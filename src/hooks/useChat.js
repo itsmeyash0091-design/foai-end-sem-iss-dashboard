@@ -5,7 +5,7 @@ const CHAT_KEY = 'iss_chat_history';
 const MAX_MESSAGES = 30;
 const HF_TOKEN = import.meta.env.VITE_AI_TOKEN;
 const MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.2:featherless-ai';
-const MODEL_URL = '/api/chat/v1/chat/completions';
+const MODEL_URL = '/api/chat/completions';
 
 const SYSTEM_PROMPT = `You are the ISS Mission Control AI Assistant. Your goal is to provide accurate, real-time information about the International Space Station and space news.
 GUIDELINES:
