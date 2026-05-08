@@ -3,17 +3,16 @@ import { useState, useCallback } from 'react';
 const CHAT_KEY = 'iss_chat_history';
 const MAX_MESSAGES = 30;
 const HF_TOKEN = import.meta.env.VITE_AI_TOKEN;
-const MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.3';
-const MODEL_URL = `/api/chat/models/${MODEL_NAME}/v1/chat/completions`;
+const MODEL_NAME = 'mistralai/Mistral-7B-Instruct-v0.2:featherless-ai';
+const MODEL_URL = '/api/chat/v1/chat/completions';
 
-const SYSTEM_PROMPT = `You are a professional ISS Mission Control AI Assistant. 
-Use the following context to answer questions. 
-CONTEXT:
-- Use only provided ISS coordinates, speed, and astronaut lists.
-- Use only the provided space news summaries.
-- If information is missing, say "I don't have that live data yet."
-- Do NOT use external knowledge.
-- Keep answers professional and concise.`;
+const SYSTEM_PROMPT = `You are the ISS Mission Control AI Assistant. Your goal is to provide accurate, real-time information about the International Space Station and space news.
+GUIDELINES:
+1. Use the provided LIVE DASHBOARD DATA for all telemetry questions (position, speed, location).
+2. Use the provided LATEST SPACE NEWS for current events.
+3. If data is unavailable, state: "I am currently re-establishing a data link for that information."
+4. Be professional, concise, and space-themed.
+5. Do NOT hallucinate data or use external knowledge beyond the provided context.`;
 
 function loadHistory() {
   try {

@@ -11,16 +11,16 @@ const ASTROS_BACKUP = `https://api.allorigins.win/raw?url=${encodeURIComponent('
 const POLL_INTERVAL = 15000;
 
 export function useISS() {
-  const [position, setPosition] = useState(null);
-  const [positions, setPositions] = useState([]);
-  const [speed, setSpeed] = useState(27600);
-  const [speedHistory, setSpeedHistory] = useState([]);
-  const [astronauts, setAstronauts] = useState([]);
+  const [position, setPosition] = useState(() => getCached('iss_position'));
+  const [positions, setPositions] = useState(() => getCached('iss_positions') || []);
+  const [speed, setSpeed] = useState(() => getCached('iss_speed') || 27600);
+  const [speedHistory, setSpeedHistory] = useState(() => getCached('iss_speed_history') || []);
+  const [astronauts, setAstronauts] = useState(() => getCached('iss_astronauts') || []);
   const [location, setLocation] = useState('Calculating…');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!position);
   const [error, setError] = useState(null);
-  const prevPosition = useRef(null);
-  const prevTimestamp = useRef(null);
+  const prevPosition = useRef(position);
+  const prevTimestamp = useRef(position?.timestamp);
 
   const fetchAstronauts = useCallback(async () => {
     try {
@@ -28,6 +28,7 @@ export function useISS() {
       const { data } = await axios.get(`${ASTROS_PROXY}?t=${Date.now()}`, { timeout: 8000 });
       if (data && data.people) {
         setAstronauts(data.people);
+        setCached('iss_astronauts', data.people, 3600000); // 1 hour cache
         return;
       }
     } catch (err) {
@@ -36,6 +37,7 @@ export function useISS() {
         const { data } = await axios.get(ASTROS_BACKUP, { timeout: 10000 });
         if (data && data.people) {
           setAstronauts(data.people);
+          setCached('iss_astronauts', data.people, 3600000);
         }
       } catch (err2) {
         console.warn('All astronaut sources failed:', err2.message);
@@ -50,14 +52,15 @@ export function useISS() {
 
     // Strategy 1: OpenNotify via Proxy (User requested priority)
     try {
-      const res = await axios.get(ISS_PROXY, { timeout: 8000 });
+      // Add a random parameter to bypass any intermediate caching
+      const res = await axios.get(`${ISS_PROXY}?t=${Date.now()}`, { timeout: 8000 });
       data = res.data;
       success = true;
     } catch (err) {
       console.warn('OpenNotify proxy failed, attempting WhereTheISS.at fallback...');
       // Strategy 2: WhereTheISS.at (Reliable backup)
       try {
-        const res = await axios.get(ISS_BACKUP, { timeout: 8000 });
+        const res = await axios.get(`${ISS_BACKUP}?t=${Date.now()}`, { timeout: 8000 });
         data = res.data;
         isWhereTheIss = true;
         success = true;
@@ -103,7 +106,12 @@ export function useISS() {
       prevPosition.current = newPos;
       prevTimestamp.current = ts;
       setPosition(newPos);
-      setPositions(prev => [...prev, newPos].slice(-15));
+      setPositions(prev => {
+        const updated = [...prev, newPos].slice(-15);
+        setCached('iss_positions', updated, 3600000);
+        return updated;
+      });
+      setCached('iss_position', newPos, 3600000);
       setError(null);
     } else {
       // If we don't have a position yet, set an error
